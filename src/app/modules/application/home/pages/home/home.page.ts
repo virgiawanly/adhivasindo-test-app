@@ -156,14 +156,11 @@ export class HomePage implements OnInit, OnDestroy {
   logout() {
     this._authService.logout().subscribe(() => {
       this._userService.clearUserDataFromStorage();
-
-      if (window && window.location) {
-        window.location.reload();
-      }
-
-      // this._router.navigateByUrl('/auth/login', {
-      //   replaceUrl: true,
-      // });
+      setTimeout(() => {
+        this._router.navigateByUrl('/auth/login', {
+          replaceUrl: true,
+        });
+      });
     });
   }
 }

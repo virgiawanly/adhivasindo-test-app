@@ -8,29 +8,30 @@ import { StorageService } from './storage.service';
   providedIn: 'root',
 })
 export class AuthService {
-  private _isAuthenticated = new BehaviorSubject<boolean>(false);
-  private _isInitialized = new BehaviorSubject<boolean>(false);
+  private _isAuthenticated = new BehaviorSubject(false);
+  private _isInitialized = new BehaviorSubject(false);
 
   constructor(
     private _http: HttpClient,
     private _storageService: StorageService
   ) {
-    this._initializeAuthState();
-  }
+    // Check if the user is authenticated by checking the token.
+    this._storageService.get(environment.access_token_identifier).then((token) => {
+      if (token) {
+        this._isAuthenticated.next(true);
+      }
 
-  private async _initializeAuthState(): Promise<void> {
-    try {
-      const token = await this._storageService.get(environment.access_token_identifier);
-      this._isAuthenticated.next(!!token);
-    } catch (error) {
-      console.error('Failed to initialize auth state', error);
-      this._isAuthenticated.next(false);
-    } finally {
       this._isInitialized.next(true);
-    }
+    });
   }
 
-  private async _setTokens(accessToken: string | null, refreshToken: string | null): Promise<void> {
+  /**
+   * Set the API token in the storage.
+   *
+   * @param {string | null} accessToken
+   * @returns Promise<any>
+   */
+  async setApiToken(accessToken: string | null, refreshToken: string | null = null) {
     try {
       if (accessToken) {
         await this._storageService.set(environment.access_token_identifier, accessToken);
@@ -48,33 +49,22 @@ export class AuthService {
     }
   }
 
+  /**
+   * Verify the user phone number and send OTP code.
+   *
+   * @param {Object} credentials
+   * @param {string} credentials.email
+   * @param {string} credentials.password
+   * @returns Observable<any>
+   */
   login(credentials: { email: string; password: string }): Observable<any> {
-    return this._http
-      .post<{
-        data: { access_token: string; refresh_token: string };
-      }>(`${environment.api_url}/mobile/auth/login`, credentials)
-      .pipe(
-        switchMap((res) => {
-          const { access_token, refresh_token } = res.data;
-          return from(this._setTokens(access_token, refresh_token)).pipe(
-            switchMap(() => {
-              this._isAuthenticated.next(true);
-              return of(res);
-            })
-          );
-        }),
-        catchError((err) => {
-          console.error('Login failed', err);
-          return throwError(() => err);
-        })
-      );
-  }
+    return this._http.post(`${environment.api_url}/mobile/auth/login`, credentials).pipe(
+      switchMap((res: any) => {
+        const { access_token, refresh_token } = res.data;
+        this.setApiToken(access_token, refresh_token);
+        this._isAuthenticated.next(!!access_token);
 
-  loginUsingToken(accessToken: string | null, refreshToken: string | null): Observable<boolean> {
-    return from(this._setTokens(accessToken, refreshToken)).pipe(
-      switchMap(() => {
-        this._isAuthenticated.next(!!accessToken);
-        return of(true);
+        return of(res);
       })
     );
   }
@@ -117,23 +107,60 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<void> {
-    return from(this._setTokens(null, null)).pipe(
-      switchMap(() => {
-        this._isAuthenticated.next(false);
-        return of();
+  /**
+   * Login the user using the token.
+   *
+   * @param {string} accessToken
+   * @param {string} refreshToken
+   * @returns Observable<any>
+   */
+  loginUsingToken(accessToken: string, refreshToken: string): Observable<any> {
+    return from(
+      new Promise((resolve) => {
+        this.setApiToken(accessToken, refreshToken).then(() => {
+          this._isAuthenticated.next(true);
+          resolve(true);
+        });
       })
     );
   }
 
+  /**
+   * Logout the user.
+   *
+   * @returns Observable<boolean>
+   */
+  logout(): Observable<boolean> {
+    this.setApiToken(null);
+    this._isAuthenticated.next(false);
+    return from(this._storageService.remove(environment.access_token_identifier)).pipe(
+      switchMap(() => of(true)) // Return `true` to indicate successful logout
+    );
+  }
+
+  /**
+   * Check if the user is authenticated.
+   *
+   * @return boolean
+   */
   check(): boolean {
     return this._isAuthenticated.getValue();
   }
 
+  /**
+   * Observe the authentication status.
+   *
+   * @return Observable<boolean>
+   */
   observe(): Observable<boolean> {
     return this._isAuthenticated.asObservable();
   }
 
+  /**
+   * Check if the service is initialized.
+   *
+   * @return Observable<boolean>
+   */
   isInitialized(): Observable<boolean> {
     return this._isInitialized.asObservable();
   }
