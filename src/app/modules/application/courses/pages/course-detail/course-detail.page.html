@@ -1,0 +1,178 @@
+<ion-content [fullscreen]="true">
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" mode="md" class="z-[2]" (ionRefresh)="refreshPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <!-- ! Refresher -->
+
+  <div class="relative">
+    <!-- Background -->
+    <div class="w-full h-64 bg-gradient-to-tr from-primary-500 to-primary-400"></div>
+
+    @if (!isLoading) {
+      <!-- Content -->
+      <div class="absolute inset-x-0 top-0 z-[2] flex min-h-full flex-col pb-28">
+        <div class="flex flex-row items-center justify-between pb-0 ion-padding">
+          <button (click)="back()" class="grid bg-white rounded-full size-12 place-items-center dark:bg-surface-950">
+            <ng-icon name="lucideChevronLeft" size="1.4rem"></ng-icon>
+          </button>
+          <div class="flex flex-col items-center flex-1">
+            <h6 class="max-w-full text-lg font-semibold text-white line-clamp-1">
+              {{ 'courses.view-course' | translate | titlecase }}
+            </h6>
+          </div>
+          <div class="size-12"></div>
+        </div>
+        <div class="ion-padding">
+          <div class="flex flex-col w-full gap-4 p-4 bg-white rounded-2xl">
+            <img
+              [src]="course?.image_url"
+              class="aspect-[16/9] h-auto max-h-96 w-full rounded-xl object-cover object-center"
+              [alt]="course?.name"
+            />
+            <div class="flex flex-col gap-2">
+              <h2 class="text-2xl font-semibold">{{ course?.name }}</h2>
+              <p class="text-sm leading-6 text-surface-700 dark:text-surface-200">{{ course?.description }}</p>
+            </div>
+            <div class="flex flex-col gap-x-6 gap-y-3 lg:flex-row lg:items-center">
+              <div class="flex items-center gap-2">
+                <div class="grid rounded-full size-9 place-items-center bg-surface-50">
+                  <ng-icon name="lucideBook" size="1rem"></ng-icon>
+                </div>
+                <p class="text-sm font-medium text-surface-900 dark:text-surface-100">
+                  {{ course?.total_chapters ?? 0 }} Chapters
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="grid rounded-full size-9 place-items-center bg-surface-50">
+                  <ng-icon name="lucideCirclePlay" size="1rem"></ng-icon>
+                </div>
+                <p class="text-sm font-medium text-surface-900 dark:text-surface-100">
+                  {{ course?.total_lessons ?? 0 }} Lessons
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="grid rounded-full size-9 place-items-center bg-surface-50">
+                  <ng-icon name="lucideUsers" size="1rem"></ng-icon>
+                </div>
+                <p class="text-sm font-medium text-surface-900 dark:text-surface-100">
+                  {{ course?.total_users ?? 0 }} Students
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ion-padding">
+          <div class="grid gap-4">
+            @for (chapter of course?.chapters; track $index) {
+              <div class="flex flex-col overflow-hidden shadow-sm rounded-2xl">
+                <div class="flex items-center gap-4 p-4 bg-white">
+                  <div
+                    class="grid gap-3 rounded-full size-12 place-items-center bg-surface-50 text-surface-900 dark:bg-surface-800 dark:text-surface-50"
+                  >
+                    <ng-icon name="lucideBook" size="1.4rem"></ng-icon>
+                  </div>
+                  <div class="flex-1">
+                    <h6 class="mt-1 text-base font-semibold">
+                      {{ chapter.title }}
+                    </h6>
+                  </div>
+                </div>
+                @if (chapter.lessons?.length) {
+                  <div class="grid gap-3 p-4 bg-white border-t">
+                    @for (lesson of chapter.lessons; track $index) {
+                      <div class="flex items-start gap-4">
+                        <div
+                          class="grid gap-3 rounded-full size-8 place-items-center bg-surface-50 text-surface-900 dark:bg-surface-800 dark:text-surface-50"
+                        >
+                          <span class="text-sm font-medium">{{ $index + 1 }}</span>
+                        </div>
+                        <div class="flex-1">
+                          <h6 class="mt-1 text-base">
+                            {{ lesson.title }}
+                          </h6>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Content -->
+      <div class="absolute inset-x-0 top-0 z-[2] flex min-h-full flex-col pb-28">
+        <div class="flex flex-row items-center justify-between pb-0 ion-padding">
+          <button (click)="back()" class="grid bg-white rounded-full size-12 place-items-center dark:bg-surface-950">
+            <ng-icon name="lucideChevronLeft" size="1.4rem"></ng-icon>
+          </button>
+          <div class="flex flex-col items-center flex-1">
+            <h6 class="max-w-full text-lg font-semibold text-white line-clamp-1">
+              {{ 'courses.view-course' | translate | titlecase }}
+            </h6>
+          </div>
+          <div class="size-12"></div>
+        </div>
+        <div class="ion-padding">
+          <div class="flex flex-col w-full gap-4 p-4 bg-white rounded-2xl">
+            <ion-skeleton-text
+              [animated]="true"
+              class="aspect-[16/9] h-auto max-h-96 w-full rounded-xl"
+            ></ion-skeleton-text>
+            <div class="flex flex-col gap-2">
+              <ion-skeleton-text [animated]="true" class="w-9/12 h-4 rounded"></ion-skeleton-text>
+              <div class="grid gap-1">
+                <ion-skeleton-text [animated]="true" class="w-9/12 h-2 rounded"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" class="w-8/12 h-2 rounded"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" class="w-7/12 h-2 rounded"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" class="w-10/12 h-2 rounded"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" class="w-11/12 h-2 rounded"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" class="w-6/12 h-2 rounded"></ion-skeleton-text>
+              </div>
+            </div>
+            <div class="flex flex-col gap-x-6 gap-y-3 lg:flex-row lg:items-center">
+              <div class="flex items-center gap-2">
+                <ion-skeleton-text [animated]="true" class="rounded-full size-9"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" class="h-2 rounded w-36"></ion-skeleton-text>
+              </div>
+              <div class="flex items-center gap-2">
+                <ion-skeleton-text [animated]="true" class="rounded-full size-9"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" class="h-2 rounded w-36"></ion-skeleton-text>
+              </div>
+              <div class="flex items-center gap-2">
+                <ion-skeleton-text [animated]="true" class="rounded-full size-9"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" class="h-2 rounded w-36"></ion-skeleton-text>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ion-padding">
+          <div class="grid gap-4">
+            @for (chapter of [1, 2, 3, 4, 5]; track $index) {
+              <ion-skeleton-text [animated]="true" class="h-20 rounded-xl"></ion-skeleton-text>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</ion-content>
+
+<ion-footer mode="ios" class="shadow-lg">
+  <ion-toolbar class="p-0 ion-padding">
+    @if (!isLoading) {
+      <button
+        type="submit"
+        class="relative flex flex-row justify-center w-full gap-3 px-5 overflow-hidden font-bold text-white rounded-lg ion-activatable h-11 place-items-center bg-primary-500 focus:outline-none disabled:bg-primary-400"
+      >
+        <ng-icon name="lucideCirclePlay" size="1.4rem"></ng-icon>
+        <span>{{ 'courses.start-course' | translate | titlecase }}</span>
+        <ion-ripple-effect></ion-ripple-effect>
+      </button>
+    } @else {
+      <ion-skeleton-text [animated]="true" class="w-full rounded-lg h-11"></ion-skeleton-text>
+    }
+  </ion-toolbar>
+</ion-footer>

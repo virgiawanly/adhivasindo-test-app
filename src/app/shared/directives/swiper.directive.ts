@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, Directive, ElementRef, Input, OnInit } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 import { SwiperOptions } from 'swiper/types';
 
 @Directive({
@@ -9,14 +9,14 @@ export class SwiperDirective implements OnInit {
   private readonly swiperElement: HTMLElement;
 
   @Input()
-  options?: SwiperOptions;
+  config?: SwiperOptions;
 
   constructor(private el: ElementRef<HTMLElement>) {
     this.swiperElement = el.nativeElement;
   }
 
   ngOnInit() {
-    Object.assign(this.el.nativeElement, this.options);
+    Object.assign(this.el.nativeElement, this.config);
 
     // @ts-ignore
     this.el.nativeElement.initialize();
