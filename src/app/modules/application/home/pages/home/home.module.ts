@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { NgIconsModule } from '@ng-icons/core';
-import { lucideBook, lucideCirclePlay, lucideSearch, lucideUsers } from '@ng-icons/lucide';
+import { lucideBook, lucideCirclePlay, lucideLogOut, lucideSearch, lucideUsers } from '@ng-icons/lucide';
 import { TranslateModule } from '@ngx-translate/core';
 import { HomePageRoutingModule } from './home-routing.module';
 import { HomePage } from './home.page';
@@ -27,6 +27,7 @@ register();
       lucideCirclePlay,
       lucideBook,
       lucideUsers,
+      lucideLogOut,
     }),
   ],
   declarations: [HomePage],

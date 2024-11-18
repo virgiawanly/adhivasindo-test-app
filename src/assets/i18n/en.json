@@ -98,20 +98,6 @@
   "home.recently-added-courses": "Latest Courses",
   "home.continue-learning": "Continue Learning",
 
-  "customers.list.title": "Customers",
-  "customers.list.search-placeholder": "Search customers...",
-  "customers.create.title": "Add Customer",
-  "customers.edit.title": "Edit Customer",
-  "customers.form.name.label": "Name",
-  "customers.form.name.placeholder": "Enter customer name",
-  "customers.form.phone.label": "Phone/Whatsapp Number",
-  "customers.form.phone.placeholder": "Enter customer phone/whatsapp number (Optional)",
-  "customers.form.email.label": "Email",
-  "customers.form.email.placeholder": "Enter customer email (Optional)",
-  "customers.form.address.label": "Address",
-  "customers.form.address.placeholder": "Enter customer address (Optional)",
-  "customers.form.button.save": "Save",
-
-  "customer-card.last-transaction": "Last Transaction",
-  "customer-card.balance": "Balance"
+  "courses.view-course": "View Course",
+  "courses.start-course": "Start Course"
 }

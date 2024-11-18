@@ -29,6 +29,7 @@ export interface Course {
   competencies?: CourseCompetency[];
   tools?: Tool[];
   chapters?: Chapter[];
+  total_chapters?: number;
   total_lessons?: number;
   total_video_lessons?: number;
   total_text_lessons?: number;

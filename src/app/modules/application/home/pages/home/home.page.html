@@ -15,10 +15,14 @@
         <h6 class="max-w-full text-sm font-semibold line-clamp-1">{{ user.name }}</h6>
       </div>
     }
-    <div class="grid bg-white rounded-full size-12 place-items-center dark:bg-surface-950">
-      <ng-icon name="lucideSearch" size="1.4rem"></ng-icon>
-    </div>
+    <button
+      (click)="openLogoutConfirmation()"
+      class="grid bg-white rounded-full size-12 place-items-center dark:bg-surface-950"
+    >
+      <ng-icon name="lucideLogOut" size="1.4rem"></ng-icon>
+    </button>
   </div>
+
   <main class="min-h-screen gap-8 ion-padding flex-flex-col">
     <div
       class="grid w-full grid-cols-2 p-5 rounded-2xl bg-gradient-to-tr from-primary-500 to-primary-400 md:px-8 md:py-6"
@@ -68,8 +72,10 @@
             <swiper-container appSwiper [config]="recentlyAccessedCoursesSwiperConfig">
               @for (course of recentlyAccessedCourses; track $index) {
                 <swiper-slide>
-                  <a [href]="'/courses/' + course.id">
-                    <div class="flex flex-col gap-4 p-4 bg-white rounded-lg dark:bg-surface-900">
+                  <a [routerLink]="'/courses/' + course.id">
+                    <div
+                      class="relative flex flex-col gap-4 p-4 overflow-hidden bg-white ion-activatable rounded-xl dark:bg-surface-900"
+                    >
                       <div class="relative overflow-hidden rounded-lg">
                         <img
                           [src]="course.image_url"
@@ -92,13 +98,14 @@
                         </div>
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
                           <div class="flex items-center gap-1">
-                            <ng-icon name="lucideBook" size="0.8rem"></ng-icon>
-                            <p class="text-xs text-surface-800 dark:text-surface-100">
+                            <ng-icon name="lucideCirclePlay" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
                               {{ course.user_total_completed_lessons ?? 0 }}/{{ course.total_lessons ?? 0 }} Completed
                             </p>
                           </div>
                         </div>
                       </div>
+                      <ion-ripple-effect></ion-ripple-effect>
                     </div>
                   </a>
                 </swiper-slide>
@@ -120,8 +127,10 @@
             <swiper-container appSwiper [config]="popularCoursesSwiperConfig">
               @for (course of popularCourses; track $index) {
                 <swiper-slide>
-                  <a [href]="'/courses/' + course.id">
-                    <div class="flex flex-col gap-4 p-4 bg-white rounded-lg min-h-72 dark:bg-surface-900">
+                  <a [routerLink]="'/courses/' + course.id">
+                    <div
+                      class="flex flex-col gap-4 p-4 overflow-hidden bg-white ion-activatable min-h-72 rounded-xl dark:bg-surface-900"
+                    >
                       <img
                         [src]="course.image_url"
                         [alt]="course.name"
@@ -131,21 +140,28 @@
                         <div class="flex-1">
                           <h6 class="text-base font-semibold line-clamp-2">{{ course.name }}</h6>
                         </div>
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                        <div class="flex flex-col gap-x-4 gap-y-2 sm:flex-row sm:items-center">
                           <div class="flex items-center gap-1">
                             <ng-icon name="lucideBook" size="0.8rem"></ng-icon>
-                            <p class="text-xs text-surface-800 dark:text-surface-100">
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
+                              {{ course.total_chapters ?? 0 }} Chapters
+                            </p>
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <ng-icon name="lucideCirclePlay" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
                               {{ course.total_lessons ?? 0 }} Lessons
                             </p>
                           </div>
                           <div class="flex items-center gap-1">
                             <ng-icon name="lucideUsers" size="0.8rem"></ng-icon>
-                            <p class="text-xs text-surface-800 dark:text-surface-100">
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
                               {{ course.total_users ?? 0 }} Students
                             </p>
                           </div>
                         </div>
                       </div>
+                      <ion-ripple-effect></ion-ripple-effect>
                     </div>
                   </a>
                 </swiper-slide>
@@ -167,8 +183,10 @@
             <swiper-container appSwiper [config]="recentlyAddedCoursesSwiperConfig">
               @for (course of recentlyAddedCourses; track $index) {
                 <swiper-slide>
-                  <a [href]="'/courses/' + course.id">
-                    <div class="flex flex-col gap-4 p-4 bg-white rounded-lg min-h-72 dark:bg-surface-900">
+                  <a [routerLink]="'/courses/' + course.id">
+                    <div
+                      class="flex flex-col gap-4 p-4 overflow-hidden bg-white ion-activatable min-h-72 rounded-xl dark:bg-surface-900"
+                    >
                       <img
                         [src]="course.image_url"
                         [alt]="course.name"
@@ -178,21 +196,28 @@
                         <div class="flex-1">
                           <h6 class="text-base font-semibold line-clamp-2">{{ course.name }}</h6>
                         </div>
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                        <div class="flex flex-col gap-x-4 gap-y-2 sm:flex-row sm:items-center">
                           <div class="flex items-center gap-1">
                             <ng-icon name="lucideBook" size="0.8rem"></ng-icon>
-                            <p class="text-xs text-surface-800 dark:text-surface-100">
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
+                              {{ course.total_chapters ?? 0 }} Chapters
+                            </p>
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <ng-icon name="lucideCirclePlay" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
                               {{ course.total_lessons ?? 0 }} Lessons
                             </p>
                           </div>
                           <div class="flex items-center gap-1">
                             <ng-icon name="lucideUsers" size="0.8rem"></ng-icon>
-                            <p class="text-xs text-surface-800 dark:text-surface-100">
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
                               {{ course.total_users ?? 0 }} Students
                             </p>
                           </div>
                         </div>
                       </div>
+                      <ion-ripple-effect></ion-ripple-effect>
                     </div>
                   </a>
                 </swiper-slide>

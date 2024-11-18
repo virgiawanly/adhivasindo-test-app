@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { RefresherCustomEvent, ToastController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { AlertController, RefresherCustomEvent, ToastController } from '@ionic/angular';
 import { finalize, Subject, takeUntil } from 'rxjs';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { HttpService } from 'src/app/core/services/http.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { Course } from 'src/types/courses';
@@ -58,7 +60,10 @@ export class HomePage implements OnInit, OnDestroy {
   constructor(
     private _userService: UserService,
     private _httpService: HttpService,
-    private _toastController: ToastController
+    private _toastController: ToastController,
+    private _alertController: AlertController,
+    private _authService: AuthService,
+    private _router: Router
   ) {}
 
   ngOnInit() {
@@ -99,7 +104,7 @@ export class HomePage implements OnInit, OnDestroy {
           error: (err) => {
             this._toastController
               .create({
-                message: 'Failed to load vouchers',
+                message: 'Failed to load courses',
                 duration: 2000,
                 position: 'bottom',
               })
@@ -125,6 +130,40 @@ export class HomePage implements OnInit, OnDestroy {
   refreshPage(event: RefresherCustomEvent) {
     this.setupHomepage().finally(() => {
       event.target.complete();
+    });
+  }
+
+  openLogoutConfirmation() {
+    this._alertController
+      .create({
+        header: 'Logout',
+        message: 'Are you sure you want to logout?',
+        buttons: [
+          { text: 'Cancel', role: 'cancel' },
+          {
+            text: 'Logout',
+            handler: () => {
+              this.logout();
+            },
+          },
+        ],
+      })
+      .then((alert) => {
+        alert.present();
+      });
+  }
+
+  logout() {
+    this._authService.logout().subscribe(() => {
+      this._userService.clearUserDataFromStorage();
+
+      if (window && window.location) {
+        window.location.reload();
+      }
+
+      // this._router.navigateByUrl('/auth/login', {
+      //   replaceUrl: true,
+      // });
     });
   }
 }

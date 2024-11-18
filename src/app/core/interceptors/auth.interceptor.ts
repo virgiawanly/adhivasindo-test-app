@@ -7,17 +7,17 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, from, switchMap, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { StorageService } from '../services/storage.service';
-import { AuthService } from '../services/auth.service';
-import { ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
+import { BehaviorSubject, catchError, from, Observable, switchMap, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { AuthService } from '../services/auth.service';
+import { StorageService } from '../services/storage.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing = false;
-  private refreshTokenSubject: Observable<string> | null = null;
+  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
   constructor(
     private _storageService: StorageService,
@@ -30,13 +30,13 @@ export class AuthInterceptor implements HttpInterceptor {
     return from(this._storageService.get(environment.access_token_identifier)).pipe(
       switchMap((token) => {
         if (token) {
-          const headers = req.headers.append('Authorization', `Bearer ${token}`);
-          req = req.clone({ headers });
+          req = req.clone({
+            setHeaders: { Authorization: `Bearer ${token}` },
+          });
         }
 
         return next.handle(req).pipe(
           catchError((error: HttpErrorResponse) => {
-            // Check for 401 Unauthorized and refresh token if necessary
             if (error.status === 401) {
               return this.handle401Error(req, next);
             }
@@ -51,46 +51,52 @@ export class AuthInterceptor implements HttpInterceptor {
   private handle401Error(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
-      this.refreshTokenSubject = this._authService.refreshAccessToken();
+      this.refreshTokenSubject.next(null);
 
-      return this.refreshTokenSubject.pipe(
+      return this._authService.refreshAccessToken().pipe(
         switchMap((newAccessToken) => {
           this.isRefreshing = false;
-          this.refreshTokenSubject = null;
+          this.refreshTokenSubject.next(newAccessToken);
 
-          // Retry the failed request with the new access token
-          const headers = req.headers.set('Authorization', `Bearer ${newAccessToken}`);
-          const clonedRequest = req.clone({ headers });
-          return next.handle(clonedRequest);
+          req = req.clone({
+            setHeaders: { Authorization: `Bearer ${newAccessToken}` },
+          });
+
+          return next.handle(req);
         }),
         catchError((err) => {
-          this.isRefreshing = false;
-          this._authService.logout(); // Logout if refresh token fails
-          this._toastController
-            .create({
-              message: 'Your session has expired. Please login again.',
-              duration: 3000,
-              position: 'bottom',
-            })
-            .then((toast) => {
-              toast.present();
-              this._router.navigate(['/auth/login']);
-            });
+          this._authService.logout().subscribe(() => {
+            this.isRefreshing = false;
+            this._toastController
+              .create({
+                message: 'Your session has expired. Please login again.',
+                duration: 3000,
+                position: 'bottom',
+              })
+              .then((toast) => {
+                toast.present();
+                this._router.navigate(['/auth/login']);
+              });
+          });
+
           return throwError(() => err);
         })
       );
     }
 
-    // Wait for the token refresh to complete
-    return this.refreshTokenSubject
-      ? this.refreshTokenSubject.pipe(
-          switchMap((newAccessToken) => {
-            const headers = req.headers.set('Authorization', `Bearer ${newAccessToken}`);
-            const clonedRequest = req.clone({ headers });
-            return next.handle(clonedRequest);
-          })
-        )
-      : throwError(() => new Error('Token refresh is already in progress.'));
+    return this.refreshTokenSubject.pipe(
+      switchMap((newAccessToken) => {
+        if (newAccessToken) {
+          req = req.clone({
+            setHeaders: { Authorization: `Bearer ${newAccessToken}` },
+          });
+
+          return next.handle(req);
+        }
+
+        return throwError(() => new Error('Token refresh failed.'));
+      })
+    );
   }
 }
 

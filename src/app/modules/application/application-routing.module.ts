@@ -12,9 +12,9 @@ const routes: Routes = [
     loadChildren: () => import('./application-tab-routing.module').then((m) => m.ApplicationTabRoutingModule),
   },
   {
-    path: 'home',
+    path: 'courses',
     canActivate: [authGuard],
-    loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
+    loadChildren: () => import('./courses/courses.module').then((m) => m.CoursesModule),
   },
 ];
 
