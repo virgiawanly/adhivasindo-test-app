@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, from, of, switchMap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, finalize, from, of, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { StorageService } from './storage.service';
 
@@ -82,13 +82,17 @@ export class AuthService {
   refreshAccessToken(): Observable<string> {
     return from(this._storageService.get(environment.refresh_token_identifier)).pipe(
       switchMap((refreshToken) => {
+        this._isInitialized.next(false);
+
         if (!refreshToken) {
           this.logout();
           return throwError(() => new Error('No refresh token available.'));
         }
 
         return this._http
-          .post<{ data: { accessToken: string } }>(`${environment.api_url}/auth/refresh`, { refreshToken })
+          .post<{
+            data: { accessToken: string };
+          }>(`${environment.api_url}/mobile/auth/refresh`, { refresh_token: refreshToken })
           .pipe(
             switchMap((res) => {
               const { accessToken } = res.data;
@@ -103,19 +107,23 @@ export class AuthService {
             }),
             catchError((err) => {
               console.error('Failed to refresh access token', err);
-              this.logout();
               return throwError(() => err);
+            }),
+            finalize(() => {
+              this._isInitialized.next(false);
             })
           );
       })
     );
   }
 
-  logout(): void {
-    this._setTokens(null, null).then(() => {
-      this._isAuthenticated.next(false);
-      this._isInitialized.next(false);
-    });
+  logout(): Observable<void> {
+    return from(this._setTokens(null, null)).pipe(
+      switchMap(() => {
+        this._isAuthenticated.next(false);
+        return of();
+      })
+    );
   }
 
   check(): boolean {

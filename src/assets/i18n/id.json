@@ -94,21 +94,10 @@
 
   "home.welcome": "Selamat Datang",
   "home.explore-courses": "Explore Kursus",
+  "home.popular-courses": "Kursus Populer",
+  "home.recently-added-courses": "Kursus Terbaru",
+  "home.continue-learning": "Lanjutkan Belajar",
 
-  "customers.list.title": "Pelanggan",
-  "customers.list.search-placeholder": "Cari pelanggan...",
-  "customers.create.title": "Tambah Pelanggan",
-  "customers.edit.title": "Edit Pelanggan",
-  "customers.form.name.label": "Nama",
-  "customers.form.name.placeholder": "Masukkan nama pelanggan",
-  "customers.form.phone.label": "Nomor Telepon/Whatsapp",
-  "customers.form.phone.placeholder": "Masukkan nomor telepon/whatsapp (Opsional)",
-  "customers.form.email.label": "Email",
-  "customers.form.email.placeholder": "Masukkan email pelanggan (Opsional)",
-  "customers.form.address.label": "Alamat",
-  "customers.form.address.placeholder": "Masukkan alamat pelanggan (Opsional)",
-  "customers.form.button.save": "Simpan",
-
-  "customer-card.last-transaction": "Transaksi Terakhir",
-  "customer-card.balance": "Saldo"
+  "courses.view-course": "Detail Kursus",
+  "courses.start-course": "Mulai"
 }

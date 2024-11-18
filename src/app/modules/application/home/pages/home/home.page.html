@@ -1,32 +1,40 @@
 <ion-content [fullscreen]="true">
-  <div class="ion-padding flex flex-row items-center justify-between pb-0">
-    <div
-      class="grid size-12 place-items-center rounded-full bg-surface-100 font-semibold text-surface-800 dark:bg-surface-800 dark:text-surface-50"
-    >
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" mode="md" class="z-[2]" (ionRefresh)="refreshPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <!-- ! Refresher -->
+
+  <div class="flex flex-row items-center justify-between pb-0 ion-padding">
+    <div class="grid font-semibold text-white rounded-full size-12 place-items-center bg-primary-600">
       {{ getNameInitials(user?.name) }}
     </div>
     @if (user) {
-      <div class="flex flex-1 flex-col items-center">
+      <div class="flex flex-col items-center flex-1">
         <p class="text-xs text-surface-600 dark:text-surface-300">{{ 'home.welcome' | translate }}!</p>
-        <h6 class="line-clamp-1 max-w-full text-sm font-semibold">{{ user.name }}</h6>
+        <h6 class="max-w-full text-sm font-semibold line-clamp-1">{{ user.name }}</h6>
       </div>
     }
-    <div class="grid size-12 place-items-center">
-      <ng-icon name="lucideSearch" size="1.4rem"></ng-icon>
-    </div>
+    <button
+      (click)="openLogoutConfirmation()"
+      class="grid bg-white rounded-full size-12 place-items-center dark:bg-surface-950"
+    >
+      <ng-icon name="lucideLogOut" size="1.4rem"></ng-icon>
+    </button>
   </div>
-  <div class="ion-padding flex-flex-col min-h-screen">
+
+  <main class="min-h-screen gap-8 ion-padding flex-flex-col">
     <div
-      class="grid w-full grid-cols-2 rounded-2xl bg-gradient-to-tr from-primary-500 to-primary-400 px-6 py-4 md:px-8 md:py-6"
+      class="grid w-full grid-cols-2 p-5 rounded-2xl bg-gradient-to-tr from-primary-500 to-primary-400 md:px-8 md:py-6"
       style="background: url('/assets/images/welcome-bg.jpg'); background-size: cover; background-position: center"
     >
-      <div class="flex min-h-40 flex-col justify-center gap-4">
+      <div class="flex flex-col justify-center gap-4 min-h-40">
         <h6 class="text-lg font-bold text-white sm:text-xl md:text-2xl">
           Unlock Your Potential, Start Learning Today!
         </h6>
         <button
           routerLink="/application/courses"
-          class="ion-activatable relative flex h-9 w-fit max-w-full items-center gap-2 rounded-lg bg-white px-4 text-left text-xs font-bold text-primary-500 focus:outline-none sm:text-sm md:h-10 md:px-5"
+          class="relative flex items-center max-w-full gap-2 px-4 text-xs font-bold text-left bg-white rounded-lg ion-activatable h-9 w-fit text-primary-500 focus:outline-none sm:text-sm md:h-10 md:px-5"
         >
           <ng-icon name="lucideCirclePlay" size="1.25rem"></ng-icon>
           <span>{{ 'home.explore-courses' | translate | titlecase }}</span>
@@ -34,5 +42,200 @@
         </button>
       </div>
     </div>
-  </div>
+
+    @if (isLoading) {
+      @for (item of [1, 2, 3]; track $index) {
+        <section class="flex flex-col">
+          <div class="flex items-center justify-between pt-8 pb-4">
+            <ion-skeleton-text [animated]="true" class="w-40 h-3 max-w-full"></ion-skeleton-text>
+            <ion-skeleton-text [animated]="true" class="w-24 h-3 max-w-full"></ion-skeleton-text>
+          </div>
+          <div>
+            <swiper-container appSwiper [config]="recentlyAddedCoursesSwiperConfig">
+              @for (course of [1, 2, 3, 4, 5]; track $index) {
+                <swiper-slide>
+                  <ion-skeleton-text [animated]="true" class="w-full rounded-lg min-h-56"></ion-skeleton-text>
+                </swiper-slide>
+              }
+            </swiper-container>
+          </div>
+        </section>
+      }
+    } @else {
+      @if (recentlyAccessedCourses.length) {
+        <!-- Recently Accessed Courses -->
+        <section class="flex flex-col">
+          <div class="flex items-center justify-between pt-8 pb-4">
+            <h3 class="text-lg font-semibold">{{ 'home.continue-learning' | translate }}</h3>
+          </div>
+          <div>
+            <swiper-container appSwiper [config]="recentlyAccessedCoursesSwiperConfig">
+              @for (course of recentlyAccessedCourses; track $index) {
+                <swiper-slide>
+                  <a [routerLink]="'/courses/' + course.id">
+                    <div
+                      class="relative flex flex-col gap-4 p-4 overflow-hidden bg-white ion-activatable rounded-xl dark:bg-surface-900"
+                    >
+                      <div class="relative overflow-hidden rounded-lg">
+                        <img
+                          [src]="course.image_url"
+                          [alt]="course.name"
+                          class="aspect-[16/9] w-full rounded-lg object-cover"
+                        />
+                        <div
+                          class="inset-x-0 bottom-0 h-2 bg-teal-400 to-primary-300"
+                          [style]="{
+                            width:
+                              course.user_total_completed_lessons && course.total_lessons
+                                ? (course.user_total_completed_lessons / course.total_lessons) * 100 + '%'
+                                : 0,
+                          }"
+                        ></div>
+                      </div>
+                      <div class="flex flex-col flex-1 gap-2">
+                        <div class="flex-1">
+                          <h6 class="text-base font-semibold line-clamp-1">{{ course.name }}</h6>
+                        </div>
+                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                          <div class="flex items-center gap-1">
+                            <ng-icon name="lucideCirclePlay" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
+                              {{ course.user_total_completed_lessons ?? 0 }}/{{ course.total_lessons ?? 0 }} Completed
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <ion-ripple-effect></ion-ripple-effect>
+                    </div>
+                  </a>
+                </swiper-slide>
+              }
+            </swiper-container>
+          </div>
+        </section>
+        <!-- ! Recently Accessed Courses -->
+      }
+
+      @if (popularCourses.length) {
+        <!-- Popular Courses -->
+        <section class="flex flex-col">
+          <div class="flex items-center justify-between pt-6 pb-4">
+            <h3 class="text-lg font-semibold">{{ 'home.popular-courses' | translate }}</h3>
+            <a routerLink="/application/courses" class="font-semibold text-primary-600">View All</a>
+          </div>
+          <div>
+            <swiper-container appSwiper [config]="popularCoursesSwiperConfig">
+              @for (course of popularCourses; track $index) {
+                <swiper-slide>
+                  <a [routerLink]="'/courses/' + course.id">
+                    <div
+                      class="flex flex-col gap-4 p-4 overflow-hidden bg-white ion-activatable min-h-72 rounded-xl dark:bg-surface-900"
+                    >
+                      <img
+                        [src]="course.image_url"
+                        [alt]="course.name"
+                        class="aspect-[16/9] w-full rounded-lg object-cover"
+                      />
+                      <div class="flex flex-col flex-1 gap-2">
+                        <div class="flex-1">
+                          <h6 class="text-base font-semibold line-clamp-2">{{ course.name }}</h6>
+                        </div>
+                        <div class="flex flex-col gap-x-4 gap-y-2 sm:flex-row sm:items-center">
+                          <div class="flex items-center gap-1">
+                            <ng-icon name="lucideBook" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
+                              {{ course.total_chapters ?? 0 }} Chapters
+                            </p>
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <ng-icon name="lucideCirclePlay" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
+                              {{ course.total_lessons ?? 0 }} Lessons
+                            </p>
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <ng-icon name="lucideUsers" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
+                              {{ course.total_users ?? 0 }} Students
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <ion-ripple-effect></ion-ripple-effect>
+                    </div>
+                  </a>
+                </swiper-slide>
+              }
+            </swiper-container>
+          </div>
+        </section>
+        <!-- ! Popular Courses -->
+      }
+
+      @if (recentlyAddedCourses.length) {
+        <!-- Recently Added Courses -->
+        <section class="flex flex-col">
+          <div class="flex items-center justify-between pt-8 pb-4">
+            <h3 class="text-lg font-semibold">{{ 'home.recently-added-courses' | translate }}</h3>
+            <a routerLink="/application/courses" class="font-semibold text-primary-600">View All</a>
+          </div>
+          <div>
+            <swiper-container appSwiper [config]="recentlyAddedCoursesSwiperConfig">
+              @for (course of recentlyAddedCourses; track $index) {
+                <swiper-slide>
+                  <a [routerLink]="'/courses/' + course.id">
+                    <div
+                      class="flex flex-col gap-4 p-4 overflow-hidden bg-white ion-activatable min-h-72 rounded-xl dark:bg-surface-900"
+                    >
+                      <img
+                        [src]="course.image_url"
+                        [alt]="course.name"
+                        class="aspect-[16/9] w-full rounded-lg object-cover"
+                      />
+                      <div class="flex flex-col flex-1 gap-2">
+                        <div class="flex-1">
+                          <h6 class="text-base font-semibold line-clamp-2">{{ course.name }}</h6>
+                        </div>
+                        <div class="flex flex-col gap-x-4 gap-y-2 sm:flex-row sm:items-center">
+                          <div class="flex items-center gap-1">
+                            <ng-icon name="lucideBook" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
+                              {{ course.total_chapters ?? 0 }} Chapters
+                            </p>
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <ng-icon name="lucideCirclePlay" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
+                              {{ course.total_lessons ?? 0 }} Lessons
+                            </p>
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <ng-icon name="lucideUsers" size="0.8rem"></ng-icon>
+                            <p class="text-xs text-nowrap text-surface-800 dark:text-surface-100">
+                              {{ course.total_users ?? 0 }} Students
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <ion-ripple-effect></ion-ripple-effect>
+                    </div>
+                  </a>
+                </swiper-slide>
+              }
+            </swiper-container>
+          </div>
+        </section>
+        <!-- ! Recently Added Courses -->
+      }
+
+      @if (!popularCourses.length && !recentlyAddedCourses.length && !recentlyAccessedCourses.length) {
+        <div class="grid min-h-[50vh] place-items-center">
+          <div class="flex flex-col items-center gap-3">
+            <ng-icon name="lucideSearch" class="text-primary-500" size="2rem"></ng-icon>
+            <p class="ml-2 text-base font-medium">No Courses Available</p>
+          </div>
+        </div>
+      }
+    }
+  </main>
 </ion-content>
