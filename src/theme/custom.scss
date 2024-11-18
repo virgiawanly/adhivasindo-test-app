@@ -1,0 +1,17 @@
+ion-content.page-content {
+  --background: var(--ion-page-background);
+}
+
+ion-header.page-header {
+  box-shadow: none;
+
+  ion-toolbar {
+    --min-height: 56px;
+    --border-width: 0;
+  }
+}
+
+ion-button {
+  --border-radius: 0.5rem;
+  --box-shadow: 0;
+}

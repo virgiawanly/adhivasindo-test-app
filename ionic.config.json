@@ -1,0 +1,8 @@
+{
+  "name": "cleandry-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "id": "3d2d0ba9"
+}

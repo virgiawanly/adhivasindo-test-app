@@ -1,0 +1,109 @@
+<ion-content [fullscreen]="true">
+  <div class="flex min-h-screen flex-col">
+    <div
+      class="-mb-6 grid h-[20vh] min-h-28 w-full place-items-center bg-gradient-to-br from-primary-400 to-primary-600 pb-6"
+    >
+      <div class="rounded-[50rem] bg-white px-3 py-1">
+        <img src="/assets/images/logo-text.png" class="h-auto w-48 max-w-full md:w-36 lg:w-44" />
+      </div>
+    </div>
+    <div class="ion-padding flex-1 overflow-y-auto rounded-t-2xl bg-white dark:bg-surface-dark">
+      <div class="mx-auto max-w-2xl xl:mt-12">
+        <div class="mb-6 flex flex-col">
+          <div class="flex flex-col py-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-surface-100">{{ 'login.title' | translate }}</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'login.subtitle' | translate }}</p>
+          </div>
+          <form [formGroup]="loginForm" (ngSubmit)="login()">
+            <div class="flex flex-col gap-4">
+              <div class="w-full">
+                <label for="email" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  {{ 'login.email.label' | translate }}
+                </label>
+                <div class="relative">
+                  <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3.5">
+                    <ng-icon
+                      name="lucideMail"
+                      size="1rem"
+                      class="text-surface-500 dark:text-surface-300"
+                      [ngClass]="{
+                        '!text-red-500': loginForm.get('email')?.invalid && loginForm.get('email')?.touched,
+                      }"
+                    ></ng-icon>
+                  </div>
+                  <input
+                    type="text"
+                    id="email"
+                    class="form-control form-input w-full pl-10"
+                    formControlName="email"
+                    [placeholder]="'login.email.placeholder' | translate"
+                    [ngClass]="{ 'form-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched }"
+                  />
+                </div>
+                @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+                  <p class="mt-1 text-sm text-red-500">
+                    {{ 'forms.validation.required' | translate }}
+                  </p>
+                }
+              </div>
+              <div class="w-full">
+                <label for="password" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  {{ 'login.password.label' | translate }}
+                </label>
+                <div class="relative">
+                  <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3.5">
+                    <ng-icon
+                      name="lucideLock"
+                      size="1rem"
+                      class="text-surface-500 dark:text-surface-300"
+                      [ngClass]="{
+                        '!text-red-500': loginForm.get('password')?.invalid && loginForm.get('password')?.touched,
+                      }"
+                    ></ng-icon>
+                  </div>
+                  <input
+                    type="password"
+                    id="password"
+                    class="form-control form-input w-full pl-10"
+                    formControlName="password"
+                    [placeholder]="'login.password.placeholder' | translate"
+                    [ngClass]="{
+                      'form-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched,
+                    }"
+                  />
+                </div>
+                @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+                  <p class="mt-1 text-sm text-red-500">
+                    {{ 'forms.validation.required' | translate }}
+                  </p>
+                }
+              </div>
+              <div class="mt-2 w-full">
+                <button
+                  type="submit"
+                  class="ion-activatable relative grid h-10 w-full place-items-center overflow-hidden rounded-lg bg-primary-500 px-5 text-sm font-bold text-white focus:outline-none disabled:bg-primary-400"
+                  [disabled]="isLoggingIn"
+                >
+                  @if (isLoggingIn) {
+                    <ion-spinner class="size-4" color="light"></ion-spinner>
+                  } @else {
+                    <span>{{ 'login.button.login' | translate | titlecase }}</span>
+                  }
+                  <ion-ripple-effect></ion-ripple-effect>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="mb-5 text-center">
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ 'login.dont-have-account' | translate }}
+            <a routerLink="/auth/registration" class="font-semibold text-primary-500">
+              {{ 'login.register' | translate }}
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

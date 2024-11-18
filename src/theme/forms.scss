@@ -1,0 +1,9 @@
+@layer components {
+  .form-control {
+    @apply bg-surface-light-darker block rounded-lg border border-surface-150 p-2.5 text-sm text-surface-950 placeholder:text-surface-400 read-only:bg-surface-50 read-only:bg-opacity-100 read-only:text-surface-600 focus:border-primary-500 focus:ring-primary-500 disabled:bg-surface-50 disabled:bg-opacity-100 disabled:text-surface-600 dark:border-surface-800 dark:bg-surface-900 dark:text-white dark:placeholder-surface-500 dark:read-only:bg-surface-850 dark:read-only:text-surface-500 dark:focus:border-primary-500 dark:focus:ring-primary-500 dark:disabled:bg-surface-850 dark:disabled:text-surface-500;
+
+    &.form-invalid {
+      @apply border-red-500 text-red-500 placeholder:text-red-500;
+    }
+  }
+}

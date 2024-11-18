@@ -1,0 +1,38 @@
+<ion-content [fullscreen]="true">
+  <div class="ion-padding flex flex-row items-center justify-between pb-0">
+    <div
+      class="grid size-12 place-items-center rounded-full bg-surface-100 font-semibold text-surface-800 dark:bg-surface-800 dark:text-surface-50"
+    >
+      {{ getNameInitials(user?.name) }}
+    </div>
+    @if (user) {
+      <div class="flex flex-1 flex-col items-center">
+        <p class="text-xs text-surface-600 dark:text-surface-300">{{ 'home.welcome' | translate }}!</p>
+        <h6 class="line-clamp-1 max-w-full text-sm font-semibold">{{ user.name }}</h6>
+      </div>
+    }
+    <div class="grid size-12 place-items-center">
+      <ng-icon name="lucideSearch" size="1.4rem"></ng-icon>
+    </div>
+  </div>
+  <div class="ion-padding flex-flex-col min-h-screen">
+    <div
+      class="grid w-full grid-cols-2 rounded-2xl bg-gradient-to-tr from-primary-500 to-primary-400 px-6 py-4 md:px-8 md:py-6"
+      style="background: url('/assets/images/welcome-bg.jpg'); background-size: cover; background-position: center"
+    >
+      <div class="flex min-h-40 flex-col justify-center gap-4">
+        <h6 class="text-lg font-bold text-white sm:text-xl md:text-2xl">
+          Unlock Your Potential, Start Learning Today!
+        </h6>
+        <button
+          routerLink="/application/courses"
+          class="ion-activatable relative flex h-9 w-fit max-w-full items-center gap-2 rounded-lg bg-white px-4 text-left text-xs font-bold text-primary-500 focus:outline-none sm:text-sm md:h-10 md:px-5"
+        >
+          <ng-icon name="lucideCirclePlay" size="1.25rem"></ng-icon>
+          <span>{{ 'home.explore-courses' | translate | titlecase }}</span>
+          <ion-ripple-effect></ion-ripple-effect>
+        </button>
+      </div>
+    </div>
+  </div>
+</ion-content>

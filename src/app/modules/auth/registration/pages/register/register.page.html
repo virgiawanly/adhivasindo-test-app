@@ -1,0 +1,190 @@
+<ion-content [fullscreen]="true">
+  <div class="flex min-h-screen flex-col">
+    <div class="grid h-[15vh] min-h-24 w-full place-items-center bg-gradient-to-br from-primary-400 to-primary-600">
+      <div class="rounded-[50rem] bg-white px-3 py-1">
+        <img src="/assets/images/logo-text.png" class="h-auto w-44 max-w-full md:w-36" />
+      </div>
+    </div>
+    <div class="ion-padding flex-1 overflow-y-auto bg-white dark:bg-surface-dark">
+      <div class="mx-auto max-w-2xl xl:mt-12">
+        <div class="mb-6 flex flex-col">
+          <div class="flex flex-col py-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-surface-100">
+              {{ 'registration.title' | translate }}
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'registration.subtitle' | translate }}</p>
+          </div>
+          <form [formGroup]="registerForm" (ngSubmit)="submit()">
+            <div class="flex flex-col gap-4">
+              <div class="w-full">
+                <label for="name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  <span class="mr-1 text-sm text-red-500">*</span>
+                  <span>{{ 'registration.name.label' | translate }}</span>
+                </label>
+                <div class="relative">
+                  <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3.5">
+                    <ng-icon
+                      name="lucideUser"
+                      size="1rem"
+                      class="text-surface-500 dark:text-surface-300"
+                      [ngClass]="{
+                        '!text-red-500': registerForm.get('name')?.invalid && registerForm.get('name')?.touched,
+                      }"
+                    ></ng-icon>
+                  </div>
+                  <input
+                    type="text"
+                    id="name"
+                    formControlName="name"
+                    class="form-control form-input w-full pl-10"
+                    [placeholder]="'registration.name.placeholder' | translate"
+                    [ngClass]="{
+                      'form-invalid': registerForm.get('name')?.invalid && registerForm.get('name')?.touched,
+                    }"
+                  />
+                </div>
+                @if (registerForm.get('name')?.hasError('required') && registerForm.get('name')?.touched) {
+                  <p class="mt-1 text-sm text-red-500">
+                    {{ 'forms.validation.required' | translate }}
+                  </p>
+                }
+              </div>
+              <div class="w-full">
+                <label for="email" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  <span class="mr-1 text-sm text-red-500">*</span>
+                  <span>{{ 'registration.email.label' | translate }}</span>
+                </label>
+                <div class="relative">
+                  <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3.5">
+                    <ng-icon
+                      name="lucideMail"
+                      size="1rem"
+                      class="text-surface-500 dark:text-surface-300"
+                      [ngClass]="{
+                        '!text-red-500': registerForm.get('email')?.invalid && registerForm.get('email')?.touched,
+                      }"
+                    ></ng-icon>
+                  </div>
+                  <input
+                    type="text"
+                    id="email"
+                    formControlName="email"
+                    class="form-control form-input w-full pl-10"
+                    [placeholder]="'registration.email.placeholder' | translate"
+                    [ngClass]="{
+                      'form-invalid': registerForm.get('email')?.invalid && registerForm.get('email')?.touched,
+                    }"
+                  />
+                </div>
+                @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
+                  <p class="mt-1 text-sm text-red-500">
+                    {{ 'forms.validation.required' | translate }}
+                  </p>
+                } @else if (registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched) {
+                  <p class="mt-1 text-sm text-red-500">
+                    {{ 'forms.validation.email' | translate }}
+                  </p>
+                }
+              </div>
+              <div class="w-full">
+                <label for="password" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  <span class="mr-1 text-sm text-red-500">*</span>
+                  <span>{{ 'registration.password.label' | translate }}</span>
+                </label>
+                <div class="relative">
+                  <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3.5">
+                    <ng-icon
+                      name="lucideLock"
+                      size="1rem"
+                      class="text-surface-500 dark:text-surface-300"
+                      [ngClass]="{
+                        '!text-red-500': registerForm.get('password')?.invalid && registerForm.get('password')?.touched,
+                      }"
+                    ></ng-icon>
+                  </div>
+                  <input
+                    type="password"
+                    id="password"
+                    formControlName="password"
+                    class="form-control form-input w-full pl-10"
+                    [placeholder]="'registration.password.placeholder' | translate"
+                    [ngClass]="{
+                      'form-invalid': registerForm.get('password')?.invalid && registerForm.get('password')?.touched,
+                    }"
+                  />
+                </div>
+                @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
+                  <p class="mt-1 text-sm text-red-500">
+                    {{ 'forms.validation.required' | translate }}
+                  </p>
+                }
+              </div>
+              <div class="w-full">
+                <label for="password-confirmation" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                  <span class="mr-1 text-sm text-red-500">*</span>
+                  <span>{{ 'registration.password-confirm.label' | translate }}</span>
+                </label>
+                <div class="relative">
+                  <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3.5">
+                    <ng-icon
+                      name="lucideLock"
+                      size="1rem"
+                      class="text-surface-500 dark:text-surface-300"
+                      [ngClass]="{
+                        '!text-red-500':
+                          registerForm.get('password_confirmation')?.invalid &&
+                          registerForm.get('password_confirmation')?.touched,
+                      }"
+                    ></ng-icon>
+                  </div>
+                  <input
+                    type="password"
+                    id="password-confirmation"
+                    class="form-control form-input w-full pl-10"
+                    formControlName="password_confirmation"
+                    [placeholder]="'registration.password-confirm.placeholder' | translate"
+                    [ngClass]="{
+                      'form-invalid':
+                        registerForm.get('password_confirmation')?.invalid &&
+                        registerForm.get('password_confirmation')?.touched,
+                    }"
+                  />
+                </div>
+                @if (
+                  registerForm.get('password_confirmation')?.hasError('required') &&
+                  registerForm.get('password_confirmation')?.touched
+                ) {
+                  <p class="mt-1 text-sm text-red-500">
+                    {{ 'forms.validation.required' | translate }}
+                  </p>
+                }
+              </div>
+              <div class="mt-2 w-full">
+                <button
+                  type="submit"
+                  class="ion-activatable relative grid h-10 w-full place-items-center overflow-hidden rounded-lg bg-primary-500 px-5 text-sm font-bold text-white focus:outline-none disabled:bg-primary-400"
+                  [disabled]="isSubmitting"
+                >
+                  @if (isSubmitting) {
+                    <ion-spinner class="size-4" color="light"></ion-spinner>
+                  } @else {
+                    <span>{{ 'registration.button.continue' | translate | titlecase }}</span>
+                  }
+                  <ion-ripple-effect></ion-ripple-effect>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="mb-5 text-center">
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ 'registration.have-account' | translate }}
+            <a routerLink="/auth/login" class="font-semibold text-primary-500">
+              {{ 'registration.login' | translate }}
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
