@@ -94,6 +94,9 @@
 
   "home.welcome": "Welcome",
   "home.explore-courses": "Explore Courses",
+  "home.popular-courses": "Popular Courses",
+  "home.recently-added-courses": "Latest Courses",
+  "home.continue-learning": "Continue Learning",
 
   "customers.list.title": "Customers",
   "customers.list.search-placeholder": "Search customers...",

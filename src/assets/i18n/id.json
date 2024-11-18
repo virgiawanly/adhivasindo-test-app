@@ -94,6 +94,9 @@
 
   "home.welcome": "Selamat Datang",
   "home.explore-courses": "Explore Kursus",
+  "home.popular-courses": "Kursus Populer",
+  "home.recently-added-courses": "Kursus Terbaru",
+  "home.continue-learning": "Lanjutkan Belajar",
 
   "customers.list.title": "Pelanggan",
   "customers.list.search-placeholder": "Cari pelanggan...",

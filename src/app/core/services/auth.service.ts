@@ -88,7 +88,7 @@ export class AuthService {
         }
 
         return this._http
-          .post<{ data: { accessToken: string } }>(`${environment.api_url}/auth/refresh`, { refreshToken })
+          .post<{ data: { accessToken: string } }>(`${environment.api_url}/mobile/auth/refresh`, { refreshToken })
           .pipe(
             switchMap((res) => {
               const { accessToken } = res.data;
